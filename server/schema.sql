@@ -5,15 +5,11 @@ CREATE DATABASE chat;
 
 USE chat;
 
-
-
-
 /* Create other tables and define schemas for them here! */
 CREATE TABLE `rooms` (
   `id` SERIAL PRIMARY KEY,
   `roomName` Varchar(255),
   `time_created` TIMESTAMP
-
 );
 
 CREATE TABLE `users` (
@@ -24,11 +20,10 @@ CREATE TABLE `users` (
 
 CREATE TABLE `messages` (
   `id` SERIAL PRIMARY KEY,
-  `message` varchar(255) ,
+  `text` varchar(255) ,
   `roomname_id` INTEGER REFERENCES rooms(id),
   `user_id` INTEGER REFERENCES users(id),
   `time_created` TIMESTAMP
-
 );
 
 /*  Execute this file from the command line by typing:
