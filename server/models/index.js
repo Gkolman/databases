@@ -1,24 +1,60 @@
 var db = require('../db');
-console.log('database -> ', db);
+// console.log('database -> ', db);
+//db.connect();
 module.exports = {
   messages: {
-    get: function () {
+    get: function (cb) {
       db.connect(function(err) {
-        if (err) { throw err; }
         db.query( 'SELECT * FROM messages', function (err, result, fields) {
-          if (err) { throw err; }
-          console.log('result -> ',result);
+          if (err) {
+            console.log('err -> ', err);
+            // cb(err, null);
+            // console.log('field', field);
+          }
+          console.log('result model line14 -> ', result);
+          // cb(null, result);
         });
       });
+      // db.end();
     }, // a function which produces all the messages
-    post: function () {} // a function which can be used to insert a message into the database
+    post: function (mes) {
+      var message = JSON.stringify(mes.message);
+      var username = JSON.stringify(mes.username);
+      var roomname = JSON.stringify(mes.roomname);
+
+      db.query( `INSERT INTO messages (text, roomname_id, user_id) VALUES ( ${username}, ${message}, ${roomname})`,
+        function (err, result, fields) {
+          if (err) { console.log('err -> ', err); }
+        });
+      // db.end();
+    } // a function which can be used to insert a message into the database
   },
-  // get retrieve  select * messages;
-  // post insert .. .value
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function (cb) {
+      db.query( 'SELECT * FROM users', function (err, result, fields) {
+        if (err) {
+          console.log('err -> ', err);
+          cb(err, null);
+        }
+
+        console.log('result -> ', result);
+        cb(null, result);
+        console.log('callback -> ', cb);
+
+      });
+      // db.end();
+    },
+    post: function (user) {
+      //cb(user);
+      console.log('user looks like -> ', user);
+      db.query( `INSERT INTO users (username) VALUES (${user.username})`, function (err, result, fields) {
+        console.log('result -> ', result);
+      });
+      // db.end();
+    }
   }
 };
+
+module.exports.messages.get();
 
