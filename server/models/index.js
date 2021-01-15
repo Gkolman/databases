@@ -4,17 +4,16 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (cb) {
-      db.connect(function(err) {
-        db.query( 'SELECT * FROM messages', function (err, result, fields) {
-          if (err) {
-            console.log('err -> ', err);
-            // cb(err, null);
-            // console.log('field', field);
-          }
-          console.log('result model line14 -> ', result);
-          // cb(null, result);
-        });
+      // db.connect(function(err) {
+      db.query( 'SELECT * FROM messages', function (err, result) {
+        if (err) {
+          // console.log('err -> ', err);
+          cb(err, null);
+          // console.log('field', field);
+        }
+        cb(null, result);
       });
+      // });
       // db.end();
     }, // a function which produces all the messages
     post: function (mes) {

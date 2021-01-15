@@ -2,7 +2,6 @@
 
 var postMessage = require('../models').messages.post;
 var getMessage = require('../models').messages.get;
-
 var postUser = require('../models').users.post;
 var getUser = require('../models').users.get;
 
@@ -12,7 +11,13 @@ module.exports = {
 
       console.log('message get res -> ', res.body);
       console.log('message get req -> ', req.body);
-      getMessage();
+      getMessage(function (err, data) {
+        if (err) {
+          console.log('error -> ', error);
+          return;
+        }
+        res.send(data);
+      } );
       res.end();
 
     }, // a function which handles a get request for all messages
@@ -30,8 +35,10 @@ module.exports = {
     get: function (req, res) {
       console.log('users get res -> ', res.body);
       console.log('users get req -> ', req.body);
-      getUser();
-      res.end();
+      getUser( (err, data) => {
+        return err ? consle.log( 'err ->', err) : data;
+      } );
+      // res.end();
     },
     post: function (req, res, next) {
 
