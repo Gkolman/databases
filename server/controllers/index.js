@@ -9,43 +9,47 @@ module.exports = {
   messages: {
     get: function (req, res) {
 
-      console.log('message get res -> ', res.body);
-      console.log('message get req -> ', req.body);
       getMessage(function (err, data) {
         if (err) {
-          console.log('error -> ', error);
+          console.error('error -> ', error);
           return;
+        } else {
+          res.send(data);
         }
-        res.send(data);
-      } );
-      res.end();
+      });
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-
-      console.log('message post res -> ', res.body);
-      console.log('message post req -> ', req.body);
-      postMessage(req.body);
-      res.end();
+      postMessage(req.body, (err, result) => {
+        if (err) {
+          console.log('err ->', err);
+        } else {
+          res.sendStatus(200);
+        }
+      } );
+      // res.end();
     } // a function which handles posting a message to the database
   },
 
   users: {
     // Ditto as above
     get: function (req, res) {
-      console.log('users get res -> ', res.body);
-      console.log('users get req -> ', req.body);
       getUser( (err, data) => {
-        return err ? consle.log( 'err ->', err) : data;
+        if (err) {
+          console.error('err -> ', err);
+        } else {
+          res.send(data);
+        }
       } );
-      // res.end();
     },
     post: function (req, res, next) {
-
-      console.log('users post res -> ', res.body);
-      console.log('users post req -> ', req.body);
-      postUser(req.body);
-      res.end();
+      postUser(req.body, (err, result) => {
+        if (err) {
+          console.log( 'err', err);
+        } else {
+          res.sendStatus(200);
+        }
+      });
     }
   }
 };

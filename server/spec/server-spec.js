@@ -56,9 +56,10 @@ describe('Persistent Node Chat Server', function() {
           // Should have one result:
           expect(results.length).to.equal(1);
 
+          console.log('results -> ', results);
+
           // TODO: If you don't have a column named text, change this test.
           expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
-
           done();
         });
       });
@@ -67,21 +68,36 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-    var queryString = '';
+    var insert = 'INSERT INTO messages (text, roomname_id) VALUES ("Men like you can never change!", "main")';
+    var values = '';
+    dbConnection.query( insert + values, function(err, results) {
+      if (err) { throw err; }
+
+    });
+
+    var queryString = 'SELECT * FROM messages';
     var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
 
-    dbConnection.query(queryString, queryArgs, function(err) {
+    dbConnection.query(queryString, queryArgs, function(err, results) {
       if (err) { throw err; }
+
+      console.log('results looks like -> ', results);
 
       // Now query the Node chat server and see if it returns
       // the message we just inserted:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+        if (error) { throw error; }
+        console.log('body looks like -> ', body);
+        // body.push('Men like you can never change!');
         var messageLog = JSON.parse(body);
+
+        //messageLog.push('Men like you can never change!');
+        console.log('messageLog', messageLog);
         expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
+        expect(messageLog[0].roomname_id).to.equal('main');
         done();
       });
     });
