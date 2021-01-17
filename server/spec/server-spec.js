@@ -68,7 +68,7 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-    var insert = 'INSERT INTO messages (text, roomname_id) VALUES ("Men like you can never change!", "main")';
+    var insert = 'INSERT INTO messages (text, roomname) VALUES ("Men like you can never change!", "main")';
     var values = '';
     dbConnection.query( insert + values, function(err, results) {
       if (err) { throw err; }
@@ -93,11 +93,10 @@ describe('Persistent Node Chat Server', function() {
         console.log('body looks like -> ', body);
         // body.push('Men like you can never change!');
         var messageLog = JSON.parse(body);
-
         //messageLog.push('Men like you can never change!');
         console.log('messageLog', messageLog);
         expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname_id).to.equal('main');
+        expect(messageLog[0].roomname).to.equal('main');
         done();
       });
     });

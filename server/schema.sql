@@ -6,24 +6,25 @@ CREATE DATABASE chat;
 USE chat;
 
 /* Create other tables and define schemas for them here! */
-CREATE TABLE `rooms` (
-  `id` SERIAL PRIMARY KEY,
-  `roomname` Varchar(255),
-  `time_created` TIMESTAMP
+
+
+CREATE TABLE messages (
+  /* Describe your table here.*/
+
+  id int NOT NULL AUTO_INCREMENT,
+  userid INTEGER REFERENCES users(id),
+  text varchar(200)  NOT NULL,
+  roomname varchar(20),
+  PRIMARY KEY (id)
 );
 
-CREATE TABLE `users` (
-  `id` SERIAL PRIMARY KEY,
-  `username` varchar(255),
-  `time_created` TIMESTAMP
-);
+/* Create other tables and define schemas for them here! */
 
-CREATE TABLE `messages` (
-  `id` SERIAL PRIMARY KEY,
-  `text` varchar(255) ,
-  `roomname_id` varchar(255),
-  `user_id` varchar(255),
-  `time_created` TIMESTAMP
+
+CREATE TABLE users (
+  id        int    NOT NULL AUTO_INCREMENT,
+  username  varchar(40)   NOT NULL,
+  PRIMARY KEY (id)
 );
 
 /*  Execute this file from the command line by typing:

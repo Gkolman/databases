@@ -1,57 +1,72 @@
-var db = require('../db');
-// console.error('database -> ', db);
-// db.connect();
+
+
+
+var orm = require('../db');
+// var usersTable = require('../db').users;
+// var user = require('../db').User;
+// var message = require('../db').Message;
+
+
+// console.log('user typeof-> ', typeof(user));
+// console.log('message typeof-> ', typeof(message));
+
+
 module.exports = {
   messages: {
     get: function (cb) {
-      db.query('SELECT * FROM messages', function (err, result) {
+      var query = 'SELECT messages.id, message.text, message.roomname, users.username FROM messages \
+                   LEFT OUTER JOIN users ON (messages.userid = users.id)';
+      orm.query(query, (err, data) => {
         if (err) {
           cb(err, null);
         } else {
-          cb(null, result);
+          cb(null, data);
         }
       });
-      // db.end();
-    }, // a function which produces all the messages
+    }, // a function which produces all the messages |
     post: function (mes, cb) {
-      var message = JSON.stringify(mes.message);
       var username = JSON.stringify(mes.username);
+      var text = JSON.stringify(mes.text);
       var roomname = JSON.stringify(mes.roomname);
 
-      db.query( `INSERT INTO messages (text, roomname_id, user_id) VALUES ( ${message}, ${roomname}, ${username})`,
-        function (err, result) {
-          if (err) {
-            console.error('err -> ', err);
-            cb(err, null);
-          } else {
-            cb(null, result);
-            console.log('message sent');
-          }
-        });
+      var query = `INSERT INTO messages (userid, text, roomname) \
+                    VALUES ( (SELECT id FROM users WHERE username = ${username}), ${text}, ${roomname}) `;
+      orm.query(query, (err, data) => {
+        if (err) {
+          cb(err, null);
+        } else {
+          cb(null, data);
+        }
+      });
     } // a function which can be used to insert a message into the database
   },
   users: {
     // Ditto as above.
     get: function (cb) {
-      db.query( 'SELECT * FROM users', function (err, result, fields) {
+      // define the querry;
+      var query = 'SELECT * from users';
+
+
+      // orm querry search
+      orm.query(query, function(err, results) {
         if (err) {
-          console.error('err -> ', err);
           cb(err, null);
         } else {
-          cb(null, result);
+          cb(null, results);
+          console.log('result_models_line 54', results);
         }
       });
+
     },
     post: function (user, cb) {
-      console.error('user looks like -> ', user);
-      var user = JSON.stringify(user.username);
-      db.query(`INSERT INTO users (username) VALUES (${user})`, function (err, result, fields) {
+
+      var query = `insert into users(username) values ( ${user.username})`;
+      orm.query(query, function(err, results) {
         if (err) {
-          //console.error('err -> ', err);
           cb(err, null);
         } else {
-          //console.log('user posted');
-          cb(null, result);
+          cb(null, results);
+          console.log('result_models_line 69', results);
         }
       });
     }
