@@ -101,4 +101,61 @@ describe('Persistent Node Chat Server', function() {
       });
     });
   });
+
+
+  it('Should output first message has Id from the DB', function(done) {
+    // Let's insert a message into the db
+    var insert = 'INSERT INTO messages (text, roomname) VALUES ("Men like you can never change!", "main")';
+    var values = '';
+    dbConnection.query( insert + values, function(err, results) {
+      if (err) { throw err; }
+
+    });
+
+    var queryString = 'SELECT * FROM messages';
+    var queryArgs = [];
+    // TODO - The exact query string and query args to use
+    // here depend on the schema you design, so I'll leave
+    // them up to you. */
+
+    dbConnection.query(queryString, queryArgs, function(err, results) {
+      if (err) { throw err; }
+      console.log('results looks like -> ', results);
+      // Now query the Node chat server and see if it returns
+      // the message we just inserted:
+      request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+        if (error) { throw error; }
+        console.log('body looks like -> ', body);
+        // body.push('Men like you can never change!');
+        var messageLog = JSON.parse(body);
+        //messageLog.push('Men like you can never change!');
+        console.log('messageLog', messageLog);
+        expect(messageLog[0].id).to.equal(1);
+        done();
+      });
+    });
+  });
+
+  it('should add user to users and id should auto_increment', function(done) {
+    // Let's insert a message into the db
+    var insert = 'INSERT INTO users (username) VALUES ("gageAndTrang")';
+    var values = '';
+    var queryArgs = [];
+    // var queryString =
+
+    dbConnection.query(insert, queryArgs, function(err, results) {
+      if (err) { throw err; }
+      request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
+        if (error) { throw error; }
+        console.log('body looks like -> ', body);
+        // body.push('Men like you can never change!');
+        var userLog = JSON.parse(body);
+        //messageLog.push('Men like you can never change!');
+        console.log('messageLog', userLog);
+        expect(userLog[1].id).to.equal(2);
+        expect(userLog[1].username).to.equal('gageAndTrang');
+        done();
+      });
+    });
+  });
 });
